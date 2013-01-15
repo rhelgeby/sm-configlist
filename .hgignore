@@ -1,7 +1,7 @@
 # use glob syntax.
 syntax: glob
 
-src/plugin-name/vcsversion.inc
+src/configlist/vcsversion.inc
 doc/changes.diff
 doc/changes/*
 

@@ -58,6 +58,8 @@ public Plugin:myinfo =
  */
 public OnPluginStart()
 {
+    CreateConVar("configlist_version", PLUGIN_VERSION, "ConfigList version", FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_UNLOGGED|FCVAR_DONTRECORD|FCVAR_REPLICATED|FCVAR_NOTIFY);
+    
     Commands_Create();
 }
 
