@@ -33,6 +33,8 @@
 
 #define PLUGIN_VERSION "1.0.0-dev"
 
+#include "configlist/list"
+
 /**
  * Record plugin info.
  */
