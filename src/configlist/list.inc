@@ -30,6 +30,8 @@
  */
 new Handle:List = INVALID_HANDLE;
 
+/*____________________________________________________________________________*/
+
 /**
  * Creates a new list.
  *
@@ -51,6 +53,8 @@ bool:List_Create(const String:listName[])
     SetTrieValue(List, listName, list);
     return true;
 }
+
+/*____________________________________________________________________________*/
 
 /**
  * Deletes a list.
@@ -77,6 +81,8 @@ bool:List_Delete(const String:listName[])
     
     return true;
 }
+
+/*____________________________________________________________________________*/
 
 /**
  * Adds an entry to the list.
@@ -116,6 +122,8 @@ List_AddEntry(const String:listName[], const String:entryPath[], bool:createList
     return PushArrayString(list, entryPath);
 }
 
+/*____________________________________________________________________________*/
+
 /**
  * Gets a list entry at the specified index.
  *
@@ -147,6 +155,8 @@ List_GetEntryAt(const String:listName[], index, String:buffer[], maxlen)
     return GetArrayString(list, index, buffer, maxlen);
 }
 
+/*____________________________________________________________________________*/
+
 /**
  * Removes a list entry.
  *
@@ -175,6 +185,8 @@ List_RemoveEntry(const String:listName[], const String:entryPath[])
     RemoveFromArray(list, entry);
 }
 
+/*____________________________________________________________________________*/
+
 /**
  * Removes a list entry at the specified index.
  *
@@ -202,6 +214,8 @@ List_RemoveEntryAt(const String:listName[], index)
     RemoveFromArray(list, index);
 }
 
+/*____________________________________________________________________________*/
+
 /**
  * Gets the index of an entry.
  *
@@ -225,6 +239,8 @@ List_GetEntryIndex(const String:listName[], const String:entryPath[])
     return FindStringInArray(list, entryPath);
 }
 
+/*____________________________________________________________________________*/
+
 /**
  * Gets the specified list.
  *
@@ -243,6 +259,8 @@ bool:List_GetList(const String:listName[], &Handle:list = INVALID_HANDLE)
     
     return false;
 }
+
+/*____________________________________________________________________________*/
 
 /**
  * Returns whether a entry index is valid.

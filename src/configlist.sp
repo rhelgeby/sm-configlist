@@ -34,6 +34,9 @@
 #define PLUGIN_VERSION "1.0.0-dev"
 
 #include "configlist/list"
+#include "configlist/commands"
+
+/*____________________________________________________________________________*/
 
 /**
  * Record plugin info.
@@ -47,10 +50,12 @@ public Plugin:myinfo =
     url = "http://www.sourcemod.net"
 };
 
+/*____________________________________________________________________________*/
+
 /**
  * Plugin is loading.
  */
 public OnPluginStart()
 {
-    PrintToServer("Hello World!");
+    Commands_Create();
 }
