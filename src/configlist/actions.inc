@@ -77,7 +77,7 @@ bool:ListAction_ExecuteRandom(Handle:list)
     }
     
     // Get a random index.
-    new index = Math_GetRandomInt(0, len);
+    new index = Math_GetRandomInt(0, len - 1);
     
     // Get path.
     new String:path[PLATFORM_MAX_PATH];

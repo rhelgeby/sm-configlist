@@ -145,6 +145,13 @@ public Action:Command_Add(client, argc)
         return Plugin_Handled;
     }
     
+    // Check if it already exists.
+    if (List_GetEntryIndex(listName, path) >= 0)
+    {
+        ReplyToCommand(client, "Config entry already exists in list: \"%s\"", path);
+        return Plugin_Handled;
+    }
+    
     // Validate path.
     new String:fullPath[PLATFORM_MAX_PATH];
     Format(fullPath, sizeof(fullPath), "cfg/%s", path);
@@ -186,9 +193,9 @@ public Action:Command_Remove(client, argc)
     }
     
     // Validate path.
-    if (!FileExists(path, true))
+    if (List_GetEntryIndex(listName, path) < 0)
     {
-        ReplyToCommand(client, "Invalid config entry: \"%s\"", path);
+        ReplyToCommand(client, "Invalid path", path);
         return Plugin_Handled;
     }
     
@@ -227,7 +234,6 @@ public Action:Command_ExecRandom(client, argc)
         return Plugin_Handled;
     }
     
-    ReplyToCommand(client, "Exec command sent.");
     return Plugin_Handled;
 }
 
@@ -260,6 +266,5 @@ public Action:Command_ExecList(client, argc)
         return Plugin_Handled;
     }
     
-    ReplyToCommand(client, "Exec commands sent.");
     return Plugin_Handled;
 }
