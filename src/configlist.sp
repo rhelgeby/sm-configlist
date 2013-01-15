@@ -31,7 +31,7 @@
 
 #include <sourcemod>
 
-#define PLUGIN_VERSION "1.0.0-dev"
+#define PLUGIN_VERSION "1.0.0"
 
 #include "configlist/list"
 #include "configlist/commands"
