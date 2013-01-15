@@ -33,6 +33,9 @@ Commands_Create()
     
     RegAdminCmd("cfglist_add", Command_Add, ADMFLAG_RCON, "Adds a config entry to a list. Usage: cfglist_add <name> <path>");
     RegAdminCmd("cfglist_remove", Command_Remove, ADMFLAG_RCON, "Removes a config entry from a list. Usage: cfglist_add <name> <path>");
+    
+    RegAdminCmd("cfglist_exec_random", Command_ExecRandom, ADMFLAG_RCON, "Execute a random config file in a list. Usage: cfglist_exec_random <name>");
+    RegAdminCmd("cfglist_exec_list", Command_ExecList, ADMFLAG_RCON, "Executes every config file in a list sequentially. Usage: cfglist_exec_list <name>");
 }
 
 /*____________________________________________________________________________*/
@@ -143,7 +146,9 @@ public Action:Command_Add(client, argc)
     }
     
     // Validate path.
-    if (!FileExists(path, true))
+    new String:fullPath[PLATFORM_MAX_PATH];
+    Format(fullPath, sizeof(fullPath), "cfg/%s", path);
+    if (!FileExists(fullPath, true))
     {
         ReplyToCommand(client, "File not found: \"%s\"", path);
         return Plugin_Handled;
@@ -190,5 +195,71 @@ public Action:Command_Remove(client, argc)
     // Remove from list.
     List_RemoveEntry(listName, path);
     ReplyToCommand(client, "Config entry removed.");
+    return Plugin_Handled;
+}
+
+/*____________________________________________________________________________*/
+
+public Action:Command_ExecRandom(client, argc)
+{
+    if (argc == 0)
+    {
+        ReplyToCommand(client, "Execute a random config file in a list. Usage: cfglist_exec_random <name>");
+        return Plugin_Handled;
+    }
+    
+    // Get list name.
+    new String:listName[64];
+    GetCmdArg(1, listName, sizeof(listName));
+    
+    // Validate and get list.
+    new Handle:list;
+    if (!List_GetList(listName, list))
+    {
+        ReplyToCommand(client, "Invalid list name: \"%s\"", listName);
+        return Plugin_Handled;
+    }
+    
+    // Send exec command.
+    if (!ListAction_ExecuteRandom(list))
+    {
+        ReplyToCommand(client, "List is empty.");
+        return Plugin_Handled;
+    }
+    
+    ReplyToCommand(client, "Exec command sent.");
+    return Plugin_Handled;
+}
+
+/*____________________________________________________________________________*/
+
+public Action:Command_ExecList(client, argc)
+{
+    if (argc == 0)
+    {
+        ReplyToCommand(client, "Executes every config file in a list sequentially. Usage: cfglist_exec_list <name>");
+        return Plugin_Handled;
+    }
+    
+    // Get list name.
+    new String:listName[64];
+    GetCmdArg(1, listName, sizeof(listName));
+    
+    // Validate and get list.
+    new Handle:list;
+    if (!List_GetList(listName, list))
+    {
+        ReplyToCommand(client, "Invalid list name: \"%s\"", listName);
+        return Plugin_Handled;
+    }
+    
+    // Send exec command.
+    if (!ListAction_ExecuteSequential(list))
+    {
+        ReplyToCommand(client, "List is empty.");
+        return Plugin_Handled;
+    }
+    
+    ReplyToCommand(client, "Exec commands sent.");
     return Plugin_Handled;
 }

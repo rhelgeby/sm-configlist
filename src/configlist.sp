@@ -35,6 +35,7 @@
 
 #include "configlist/list"
 #include "configlist/commands"
+#include "configlist/actions"
 
 /*____________________________________________________________________________*/
 
@@ -58,4 +59,30 @@ public Plugin:myinfo =
 public OnPluginStart()
 {
     Commands_Create();
+}
+
+/*____________________________________________________________________________*/
+
+/**
+ * (from SMLIB 0.10.2)
+ * 
+ * Returns a random, uniform Integer number in the specified (inclusive) range.
+ * This is safe to use multiple times in a function.
+ * The seed is set automatically for each plugin.
+ * Rewritten by MatthiasVance, thanks.
+ * 
+ * @param min			Min value used as lower border
+ * @param max			Max value used as upper border
+ * @return				Random Integer number between min and max
+ */
+#define SIZE_OF_INT		2147483647		// without 0
+stock Math_GetRandomInt(min, max)
+{
+	new random = GetURandomInt();
+	
+	if (random == 0) {
+		random++;
+	}
+
+	return RoundToCeil(float(random) / (float(SIZE_OF_INT) / float(max - min + 1))) + min - 1;
 }
