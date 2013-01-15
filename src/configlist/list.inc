@@ -30,6 +30,30 @@
  */
 new Handle:List = INVALID_HANDLE;
 
+/**
+ * All known lists.
+ */
+#define LIST_NAME_LEN 64
+new Handle:ListNames = INVALID_HANDLE;
+
+/*____________________________________________________________________________*/
+
+/**
+ * Initializes data storage.
+ */
+List_Init()
+{
+    if (List == INVALID_HANDLE)
+    {
+        List = CreateTrie();
+    }
+    
+    if (ListNames == INVALID_HANDLE)
+    {
+        ListNames = CreateArray(ByteCountToCells(LIST_NAME_LEN));
+    }
+}
+
 /*____________________________________________________________________________*/
 
 /**
@@ -41,6 +65,8 @@ new Handle:List = INVALID_HANDLE;
  */
 bool:List_Create(const String:listName[])
 {
+    List_Init();
+    
     if (List_GetList(listName))
     {
         // List already exist.
@@ -51,6 +77,7 @@ bool:List_Create(const String:listName[])
     new Handle:list = CreateArray(ByteCountToCells(PLATFORM_MAX_PATH));
     
     SetTrieValue(List, listName, list);
+    PushArrayString(ListNames, listName);
     return true;
 }
 
@@ -65,6 +92,8 @@ bool:List_Create(const String:listName[])
  */
 bool:List_Delete(const String:listName[])
 {
+    List_Init();
+    
     new Handle:list;
     
     if (!List_GetList(listName, list))
@@ -78,6 +107,7 @@ bool:List_Delete(const String:listName[])
     
     // Update name index.
     RemoveFromTrie(List, listName);
+    RemoveFromArray(ListNames, FindStringInArray(ListNames, listName));
     
     return true;
 }
@@ -97,6 +127,8 @@ bool:List_Delete(const String:listName[])
  */
 List_AddEntry(const String:listName[], const String:entryPath[], bool:createList = true)
 {
+    List_Init();
+    
     new Handle:list;
     
     // Validate and get list.
@@ -136,8 +168,10 @@ List_AddEntry(const String:listName[], const String:entryPath[], bool:createList
  *
  * @error               Invalid list name or entry index.
  */
-List_GetEntryAt(const String:listName[], index, String:buffer[], maxlen)
+stock List_GetEntryAt(const String:listName[], index, String:buffer[], maxlen)
 {
+    List_Init();
+    
     new Handle:list;
     
     // Validate and get list.
@@ -167,6 +201,8 @@ List_GetEntryAt(const String:listName[], index, String:buffer[], maxlen)
  */
 List_RemoveEntry(const String:listName[], const String:entryPath[])
 {
+    List_Init();
+    
     new Handle:list;
     
     // Validate and get list.
@@ -195,8 +231,10 @@ List_RemoveEntry(const String:listName[], const String:entryPath[])
  *
  * @error               Invalid list name or entry index.
  */
-List_RemoveEntryAt(const String:listName[], index)
+stock List_RemoveEntryAt(const String:listName[], index)
 {
+    List_Init();
+    
     new Handle:list;
     
     // Validate and get list.
@@ -228,6 +266,8 @@ List_RemoveEntryAt(const String:listName[], index)
  */
 List_GetEntryIndex(const String:listName[], const String:entryPath[])
 {
+    List_Init();
+    
     new Handle:list;
     
     // Validate and get list.
@@ -252,6 +292,8 @@ List_GetEntryIndex(const String:listName[], const String:entryPath[])
  */
 bool:List_GetList(const String:listName[], &Handle:list = INVALID_HANDLE)
 {
+    List_Init();
+    
     if (GetTrieValue(List, listName, list))
     {
         return true;
@@ -270,7 +312,7 @@ bool:List_GetList(const String:listName[], &Handle:list = INVALID_HANDLE)
  *
  * @return              True if valid, false otherwise.
  */
-bool:List_IsValidEntryIndex(Handle:list, index)
+stock bool:List_IsValidEntryIndex(Handle:list, index)
 {
     new len = GetArraySize(list);
     if (len == 0 || index < 0 || index >= len)
@@ -279,4 +321,60 @@ bool:List_IsValidEntryIndex(Handle:list, index)
     }
     
     return true;
+}
+
+/*____________________________________________________________________________*/
+
+/**
+ * Prints a list of list names.
+ *
+ * @param client        Client index.
+ */
+List_DumpNames(client)
+{
+    List_Init();
+    
+    new len = GetArraySize(ListNames);
+    
+    if (len == 0)
+    {
+        ReplyToCommand(client, "No lists.");
+        return;
+    }
+    
+    new String:name[LIST_NAME_LEN];
+    for (new i = 0; i < len; i++)
+    {
+        GetArrayString(ListNames, i, name, sizeof(name));
+        ReplyToCommand(client, name);
+    }
+    
+    ReplyToCommand(client, "\nTotal lists: %d", len);
+}
+
+/*____________________________________________________________________________*/
+
+/**
+ * Prints the contents of a list.
+ *
+ * @param client        Client index.
+ */
+List_DumpList(client, Handle:list)
+{
+    new len = GetArraySize(list);
+    
+    if (len == 0)
+    {
+        ReplyToCommand(client, "List is empty.");
+        return;
+    }
+    
+    new String:path[PLATFORM_MAX_PATH];
+    for (new i = 0; i < len; i++)
+    {
+        GetArrayString(list, i, path, sizeof(path));
+        ReplyToCommand(client, "%d: \"%s\"", i, path);
+    }
+    
+    ReplyToCommand(client, "\nTotal entries: %d", len);
 }

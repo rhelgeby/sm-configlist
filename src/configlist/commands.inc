@@ -27,11 +27,44 @@
 
 Commands_Create()
 {
+    RegAdminCmd("cfglist", Command_List, ADMFLAG_RCON, "Displays all named lists or the contents of a list. Usage: cfglist [name]");
     RegAdminCmd("cfglist_create", Command_Create, ADMFLAG_RCON, "Creates a named list. Usage: cfglist_create <name>");
     RegAdminCmd("cfglist_delete", Command_Delete, ADMFLAG_RCON, "Deletes a named list. Usage: cfglist_delete <name>");
     
     RegAdminCmd("cfglist_add", Command_Add, ADMFLAG_RCON, "Adds a config entry to a list. Usage: cfglist_add <name> <path>");
     RegAdminCmd("cfglist_remove", Command_Remove, ADMFLAG_RCON, "Removes a config entry from a list. Usage: cfglist_add <name> <path>");
+}
+
+/*____________________________________________________________________________*/
+
+public Action:Command_List(client, argc)
+{
+    if (argc == 0)
+    {
+        // Dump lists and info.
+        ReplyToCommand(client, "Displays all named lists or the contents of a list. Usage: cfglist [name]\n");
+        List_DumpNames(client);
+        ReplyToCommand(client, "\nCommands: cfglist, cfglist_create, cfglist_delete, cfglist_add, cfglist_remove");
+        
+        return Plugin_Handled;
+    }
+    
+    // Get list name.
+    new String:listName[64];
+    GetCmdArg(1, listName, sizeof(listName));
+    
+    // Validate list.
+    new Handle:list;
+    if (!List_GetList(listName, list))
+    {
+        ReplyToCommand(client, "Invalid list name.");
+        return Plugin_Handled;
+    }
+    
+    // Dump list contents.
+    List_DumpList(client, list);
+    
+    return Plugin_Handled;
 }
 
 /*____________________________________________________________________________*/
