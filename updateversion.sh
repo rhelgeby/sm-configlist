@@ -5,7 +5,7 @@
 
 # Path to destination include file (will be created or overwritten). Update this
 # if you renamed the project folder.
-PROJECT_VERSION_FILE="src/plugintemplate/vcsversion.sp"
+PROJECT_VERSION_FILE="src/configlist/vcsversion.inc"
 
 # Command for printing date.
 DATE_COMMAND="date"
