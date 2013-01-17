@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="configlist-1.0"
+VERSION="configlist-1.1"
 REVISION=$(hg id -n)
 
 SYNTAX="Usage: $0 [--patch <base rev>]"

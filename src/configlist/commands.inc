@@ -32,7 +32,7 @@ Commands_Create()
     RegAdminCmd("cfglist_delete", Command_Delete, ADMFLAG_RCON, "Deletes a named list. Usage: cfglist_delete <name>");
     
     RegAdminCmd("cfglist_add", Command_Add, ADMFLAG_RCON, "Adds a config entry to a list. Usage: cfglist_add <name> <path>");
-    RegAdminCmd("cfglist_remove", Command_Remove, ADMFLAG_RCON, "Removes a config entry from a list. Usage: cfglist_add <name> <path>");
+    RegAdminCmd("cfglist_remove", Command_Remove, ADMFLAG_RCON, "Removes a config entry from a list. Usage: cfglist_remove <name> <path>");
     
     RegAdminCmd("cfglist_exec_random", Command_ExecRandom, ADMFLAG_RCON, "Execute a random config file in a list. Usage: cfglist_exec_random <name>");
     RegAdminCmd("cfglist_exec_list", Command_ExecList, ADMFLAG_RCON, "Executes every config file in a list sequentially. Usage: cfglist_exec_list <name>");
@@ -60,7 +60,7 @@ public Action:Command_List(client, argc)
     new Handle:list;
     if (!List_GetList(listName, list))
     {
-        ReplyToCommand(client, "Invalid list name.");
+        ReplyToCommand(client, "[ConfigList] Invalid list name.");
         return Plugin_Handled;
     }
     
@@ -87,11 +87,10 @@ public Action:Command_Create(client, argc)
     // Create list.
     if (!List_Create(listName))
     {
-        ReplyToCommand(client, "List already exist.");
+        ReplyToCommand(client, "[ConfigList] List already exist.");
         return Plugin_Handled;
     }
     
-    ReplyToCommand(client, "List created.");
     return Plugin_Handled;
 }
 
@@ -112,11 +111,10 @@ public Action:Command_Delete(client, argc)
     // Delete list.
     if (!List_Delete(listName))
     {
-        ReplyToCommand(client, "Invalid list name.");
+        ReplyToCommand(client, "[ConfigList] Invalid list name.");
         return Plugin_Handled;
     }
     
-    ReplyToCommand(client, "List deleted.");
     return Plugin_Handled;
 }
 
@@ -141,14 +139,14 @@ public Action:Command_Add(client, argc)
     // Validate list.
     if (!List_GetList(listName))
     {
-        ReplyToCommand(client, "Invalid list name: \"%s\"", listName);
+        ReplyToCommand(client, "[ConfigList] Invalid list name: \"%s\"", listName);
         return Plugin_Handled;
     }
     
     // Check if it already exists.
     if (List_GetEntryIndex(listName, path) >= 0)
     {
-        ReplyToCommand(client, "Config entry already exists in list: \"%s\"", path);
+        ReplyToCommand(client, "[ConfigList] Config entry already exists in list: \"%s\"", path);
         return Plugin_Handled;
     }
     
@@ -157,13 +155,12 @@ public Action:Command_Add(client, argc)
     Format(fullPath, sizeof(fullPath), "cfg/%s", path);
     if (!FileExists(fullPath, true))
     {
-        ReplyToCommand(client, "File not found: \"%s\"", path);
+        ReplyToCommand(client, "[ConfigList] File not found: \"%s\"", path);
         return Plugin_Handled;
     }
     
     // Add to list.
-    new entry = List_AddEntry(listName, path, false);
-    ReplyToCommand(client, "Config entry added at index %d.", entry);
+    List_AddEntry(listName, path, false);
     return Plugin_Handled;
 }
 
@@ -188,20 +185,19 @@ public Action:Command_Remove(client, argc)
     // Validate list.
     if (!List_GetList(listName))
     {
-        ReplyToCommand(client, "Invalid list name: \"%s\"", listName);
+        ReplyToCommand(client, "[ConfigList] Invalid list name: \"%s\"", listName);
         return Plugin_Handled;
     }
     
     // Validate path.
     if (List_GetEntryIndex(listName, path) < 0)
     {
-        ReplyToCommand(client, "Invalid path", path);
+        ReplyToCommand(client, "[ConfigList] Invalid path", path);
         return Plugin_Handled;
     }
     
     // Remove from list.
     List_RemoveEntry(listName, path);
-    ReplyToCommand(client, "Config entry removed.");
     return Plugin_Handled;
 }
 
@@ -223,14 +219,14 @@ public Action:Command_ExecRandom(client, argc)
     new Handle:list;
     if (!List_GetList(listName, list))
     {
-        ReplyToCommand(client, "Invalid list name: \"%s\"", listName);
+        ReplyToCommand(client, "[ConfigList] Invalid list name: \"%s\"", listName);
         return Plugin_Handled;
     }
     
     // Send exec command.
     if (!ListAction_ExecuteRandom(list))
     {
-        ReplyToCommand(client, "List is empty.");
+        ReplyToCommand(client, "[ConfigList] List is empty.");
         return Plugin_Handled;
     }
     
@@ -255,14 +251,14 @@ public Action:Command_ExecList(client, argc)
     new Handle:list;
     if (!List_GetList(listName, list))
     {
-        ReplyToCommand(client, "Invalid list name: \"%s\"", listName);
+        ReplyToCommand(client, "[ConfigList] Invalid list name: \"%s\"", listName);
         return Plugin_Handled;
     }
     
     // Send exec command.
     if (!ListAction_ExecuteSequential(list))
     {
-        ReplyToCommand(client, "List is empty.");
+        ReplyToCommand(client, "[ConfigList] List is empty.");
         return Plugin_Handled;
     }
     

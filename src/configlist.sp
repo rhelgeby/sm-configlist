@@ -31,7 +31,7 @@
 
 #include <sourcemod>
 
-#define PLUGIN_VERSION "1.0.0"
+#define PLUGIN_VERSION "1.1.0"
 
 #include "configlist/list"
 #include "configlist/commands"
@@ -50,6 +50,18 @@ public Plugin:myinfo =
     version = PLUGIN_VERSION,
     url = "http://www.sourcemod.net"
 };
+
+/*____________________________________________________________________________*/
+
+/**
+ * Plugin is about to load. Register library so other plugins can use this
+ * plugin.
+ */
+public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
+{
+    RegPluginLibrary("configlist");
+    return APLRes_Success;
+}
 
 /*____________________________________________________________________________*/
 
